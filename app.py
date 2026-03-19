@@ -92,15 +92,22 @@ with tab1:
 
         if n == 1:
             context = ()
+            prediction = model.predict_next(context)
+            if prediction:
+                st.success(f"{user_input.strip()} → {prediction}")
+            else:
+                st.warning("Unknown context — the model hasn't seen this before. Try different words.")
         else:
-            context = tuple(input_tokens[-(n - 1):])
-
-        prediction = model.predict_next(context)
-
-        if prediction:
-            st.success(f"{user_input.strip()} → {prediction}")
-        else:
-            st.warning("Unknown context — the model hasn't seen this before. Try different words.")
+            context_tokens = input_tokens[-(n - 1):]
+            if len(context_tokens) < n - 1:
+                st.warning(f"The {model_name} model needs at least {n - 1} word(s). Please type more.")
+            else:
+                context = tuple(context_tokens)
+                prediction = model.predict_next(context)
+                if prediction:
+                    st.success(f"{user_input.strip()} → {prediction}")
+                else:
+                    st.warning("Unknown context — the model hasn't seen this before. Try different words.")
 
 with tab2:
     st.subheader("Generate a full sentence")
