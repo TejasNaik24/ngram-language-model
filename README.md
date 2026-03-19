@@ -280,23 +280,3 @@ Both books were sourced from [Project Gutenberg](https://www.gutenberg.org/) as 
    http://localhost:8501
 
 ---
-
-## Dependencies
-
-```
-streamlit
-```
-
-All other modules (`collections`, `random`, `re`, `math`, `pickle`, `os`, `string`) are part of Python's standard library — no additional installation needed. The entire model is built from scratch with zero NLP libraries.
-
----
-
-## What's Next
-
-Planned extensions to this project:
-
-- **Laplace Smoothing** — assign small probabilities to unseen contexts so perplexity evaluation is fair across all models
-- **Kneser-Ney Smoothing** — the gold standard smoothing technique for n-gram LMs, used in production systems
-- **Backoff Model** — fall back from trigram → bigram → unigram when a context is unseen
-- **Perplexity on a held-out test set** — evaluate on data the model hasn't seen for a more honest comparison
-- **Character-level N-grams** — train on characters instead of words to handle unseen words naturally
