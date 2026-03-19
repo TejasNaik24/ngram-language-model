@@ -6,8 +6,5 @@ __pycache__/
 # Virtual environment
 .venv/
 
-# Saved models (optional - depends if you want to commit these)
-models/*.pkl
-
 # macOS junk
 .DS_Store

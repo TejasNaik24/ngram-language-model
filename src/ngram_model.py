@@ -1,13 +1,15 @@
 from collections import defaultdict, Counter
 import random
+import math
+
 
 class NGramModel:
     def __init__(self, n):
         if n < 1:
             raise ValueError("n must be at least 1")
         self.n = n
-        self.counts = defaultdict(Counter)   # context -> Counter(next_word)
-        self.probs = {}                      # context -> {next_word: prob}
+        self.counts = defaultdict(Counter)
+        self.probs = {}
 
     def train(self, tokens):
         """
@@ -66,7 +68,6 @@ class NGramModel:
             generated = []
         else:
             if start_context is None:
-                # pick a random known context
                 context = random.choice(list(self.probs.keys()))
             else:
                 if len(start_context) != self.n - 1:
@@ -89,3 +90,33 @@ class NGramModel:
     def get_contexts(self):
         """Optional helper to inspect learned contexts."""
         return self.probs
+
+    def perplexity(self, tokens):
+        """
+        Compute perplexity of the model on a list of tokens.
+        Lower is better. Skips unseen contexts (no smoothing).
+        """
+        log_prob_sum = 0
+        count = 0
+
+        if self.n == 1:
+            for token in tokens:
+                context = ()
+                if context in self.probs and token in self.probs[context]:
+                    prob = self.probs[context][token]
+                    log_prob_sum += math.log(prob)
+                    count += 1
+        else:
+            for i in range(len(tokens) - self.n + 1):
+                context = tuple(tokens[i:i + self.n - 1])
+                target = tokens[i + self.n - 1]
+                if context in self.probs and target in self.probs[context]:
+                    prob = self.probs[context][target]
+                    log_prob_sum += math.log(prob)
+                    count += 1
+
+        if count == 0:
+            return float("inf")
+
+        avg_log_prob = log_prob_sum / count
+        return round(math.exp(-avg_log_prob), 2)
