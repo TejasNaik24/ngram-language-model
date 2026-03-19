@@ -1,5 +1,6 @@
 import os
 import re
+import pickle
 
 
 def load_corpus(path, encoding="utf-8"):
@@ -55,3 +56,33 @@ def preview_tokens(tokens, count=20):
     """
     print(tokens[:count])
     print(f"Total tokens: {len(tokens)}")
+
+
+def save_model(model, name, folder="models"):
+    """
+    Save a trained NGramModel to disk using pickle.
+
+    Example:
+        save_model(model, "bigram")  ->  saves to models/bigram.pkl
+    """
+    os.makedirs(folder, exist_ok=True)
+    path = os.path.join(folder, f"{name}.pkl")
+    with open(path, "wb") as f:
+        pickle.dump(model, f)
+    print(f"Saved: {path}")
+
+
+def load_model(name, folder="models"):
+    """
+    Load a saved NGramModel from disk.
+
+    Example:
+        load_model("bigram")  ->  loads from models/bigram.pkl
+    """
+    path = os.path.join(folder, f"{name}.pkl")
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"No saved model found at '{path}'. Train and save it first.")
+    with open(path, "rb") as f:
+        model = pickle.load(f)
+    print(f"Loaded: {path}")
+    return model
